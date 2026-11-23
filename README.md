@@ -24,3 +24,5 @@ Shares: 10
 - `if / elif / else` se condition check karna
 
 **Day 1 / 30 Days Challenge - By Monis Shaikh**
+## Window Wala App Bhi Hai!
+app.py ko chalao, ek asli Window wala Calculator khulega!
