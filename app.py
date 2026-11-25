@@ -1,53 +1,67 @@
 import tkinter as tk
 
-# Window banao
 window = tk.Tk()
-window.title("Trading Profit Calculator - By Monis")
-window.geometry("400x450")
+window.title("Trading Calculator Pro - By Monis")
+window.geometry("420x600")
 window.configure(bg="#1e1e1e")
 
-# Title
-title = tk.Label(window, text="📈 Trading Calculator", font=("Arial", 18, "bold"), bg="#1e1e1e", fg="white")
-title.pack(pady=20)
+tk.Label(window, text="📈 Trading Calculator PRO", font=("Arial", 18, "bold"), bg="#1e1e1e", fg="white").pack(pady=15)
 
-# Buy Price
-tk.Label(window, text="Buy Price:", font=("Arial", 12), bg="#1e1e1e", fg="white").pack()
-buy_entry = tk.Entry(window, font=("Arial", 14), justify="center", width=20)
-buy_entry.pack(pady=5)
+def make_label(text):
+    tk.Label(window, text=text, font=("Arial", 11), bg="#1e1e1e", fg="white").pack()
 
-# Sell Price
-tk.Label(window, text="Sell Price:", font=("Arial", 12), bg="#1e1e1e", fg="white").pack()
-sell_entry = tk.Entry(window, font=("Arial", 14), justify="center", width=20)
-sell_entry.pack(pady=5)
+def make_entry():
+    e = tk.Entry(window, font=("Arial", 13), justify="center", width=22)
+    e.pack(pady=4)
+    return e
 
-# Quantity
-tk.Label(window, text="Kitne Shares?:", font=("Arial", 12), bg="#1e1e1e", fg="white").pack()
-qty_entry = tk.Entry(window, font=("Arial", 14), justify="center", width=20)
-qty_entry.pack(pady=5)
+make_label("Buy Price:")
+buy_entry = make_entry()
 
-# Result dikhane ke liye
-result_label = tk.Label(window, text="", font=("Arial", 14, "bold"), bg="#1e1e1e", fg="#00ff88")
-result_label.pack(pady=20)
+make_label("Sell Price:")
+sell_entry = make_entry()
 
-# Button dabane pe kya hoga
+make_label("Kitne Shares?:")
+qty_entry = make_entry()
+
+make_label("Brokerage % (Ex: 0.1):")
+brokerage_entry = make_entry()
+brokerage_entry.insert(0, "0.1")
+
+result_label = tk.Label(window, text="", font=("Arial", 12, "bold"), bg="#1e1e1e", fg="#00ff88", justify="left")
+result_label.pack(pady=15)
+
 def calculate():
     try:
         buy = float(buy_entry.get())
         sell = float(sell_entry.get())
         qty = int(qty_entry.get())
-        profit = (sell - buy) * qty
+        brok_per = float(brokerage_entry.get())
 
-        if profit > 0:
-            result_label.config(text=f"Profit: {profit} Rs ✅", fg="#00ff88")
-        elif profit < 0:
-            result_label.config(text=f"Loss: {profit} Rs ❌", fg="red")
+        total_buy = buy * qty
+        total_sell = sell * qty
+        gross = total_sell - total_buy
+        brokerage = (total_buy + total_sell) * brok_per / 100
+        net = gross - brokerage
+        profit_per = ((sell - buy) / buy) * 100
+
+        if net > 0:
+            color = "#00ff88"
+            msg = "PROFIT HUA! ✅"
+        elif net < 0:
+            color = "red"
+            msg = "LOSS HUA! ❌"
         else:
-            result_label.config(text="Na Profit, Na Loss", fg="white")
+            color = "white"
+            msg = "BARABAR!"
+
+        result_label.config(
+            text=f"{msg}\n\nGross Profit: {gross:.2f} Rs\nBrokerage: -{brokerage:.2f} Rs\n----------------\nNet Profit: {net:.2f} Rs\nProfit %: {profit_per:.2f}%",
+            fg=color
+        )
     except:
         result_label.config(text="Sahi Number Dalo!", fg="yellow")
 
-# Calculate Button
-btn = tk.Button(window, text="CALCULATE KARO", font=("Arial", 14, "bold"), bg="#00ff88", fg="black", command=calculate, width=20)
-btn.pack(pady=10)
+tk.Button(window, text="CALCULATE KARO", font=("Arial", 13, "bold"), bg="#00ff88", fg="black", command=calculate, width=22).pack(pady=10)
 
 window.mainloop()
