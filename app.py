@@ -1,9 +1,10 @@
 import tkinter as tk
 from datetime import datetime
+import os
 
 window = tk.Tk()
 window.title("Trading Calculator PRO - By Monis")
-window.geometry("420x700")
+window.geometry("420x750")
 window.configure(bg="#1e1e1e")
 
 tk.Label(window, text="📈 Trading Calculator PRO", font=("Arial", 18, "bold"), bg="#1e1e1e", fg="white").pack(pady=12)
@@ -32,13 +33,12 @@ brokerage_entry.insert(0, "0.1")
 result_label = tk.Label(window, text="", font=("Arial", 12, "bold"), bg="#1e1e1e", fg="#00ff88", justify="left")
 result_label.pack(pady=10)
 
-# --- HISTORY WALA HISSA ---
+# --- HISTORY ---
 tk.Label(window, text="📜 History - Pichle Hisaab:", font=("Arial", 12, "bold"), bg="#1e1e1e", fg="white").pack(pady=5)
 
 history_list = tk.Listbox(window, width=55, height=6, font=("Arial", 10), bg="#2d2d2d", fg="white")
 history_list.pack(pady=5)
 
-# Purani History file se load karo
 try:
     with open("history.txt", "r") as f:
         for line in f:
@@ -75,19 +75,28 @@ def calculate():
             fg=color
         )
 
-        # History me save karo
         time_now = datetime.now().strftime("%d/%m %H:%M")
         history_text = f"{time_now} | Buy {buy} Sell {sell} Qty {qty} = Net {net:.0f} Rs"
         history_list.insert(tk.END, history_text)
         history_list.yview(tk.END)
 
-        # File me bhi save karo taaki band karne ke baad bhi rahe
         with open("history.txt", "a") as f:
             f.write(history_text + "\n")
 
     except:
         result_label.config(text="Sahi Number Dalo!", fg="yellow")
 
+# --- NAYA - CLEAR HISTORY BUTTON ---
+def clear_history():
+    history_list.delete(0, tk.END)
+    # File bhi saaf karo
+    if os.path.exists("history.txt"):
+        open("history.txt", "w").close()
+    result_label.config(text="History Saaf Ho Gayi! 🧹", fg="yellow")
+
 tk.Button(window, text="CALCULATE KARO", font=("Arial", 13, "bold"), bg="#00ff88", fg="black", command=calculate, width=22).pack(pady=8)
+
+# Clear wala button - Laal rang ka
+tk.Button(window, text="🧹 HISTORY SAAF KARO", font=("Arial", 11, "bold"), bg="#ff4444", fg="white", command=clear_history, width=22).pack(pady=5)
 
 window.mainloop()
